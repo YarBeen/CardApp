@@ -3,7 +3,7 @@ import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
 import Search from "./components/Search.jsx";
-
+import {useDebounce} from 'react-use';
 const CardComponent = ({ title, description , img}) => {
 
   const [hasLiked, setHasLiked] = useState(false);
@@ -56,6 +56,9 @@ const App = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [cardList, setCardList] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [debouncedSearchedTerm, setDebouncedSearchedTerm] = useState('');
+    //Prevent too many api calls
+    useDebounce(()=> setDebouncedSearchedTerm(searchTerm), 500, [searchTerm]);
     //No deps, only run when componenet loads.
     useEffect(() => {
 
@@ -66,7 +69,7 @@ const App = () => {
         } else {
             setCardList([]); // limpiar resultados si el término está vacío
         }
-    },[searchTerm]);
+    },[debouncedSearchedTerm]);
 
     const fecthCards = async () => {
         setIsLoading(true);
